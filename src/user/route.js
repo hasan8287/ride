@@ -31,4 +31,5 @@ module.exports = [
     config: { auth: false },
     handler: controlller.login,
   },
+  
 ];

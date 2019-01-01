@@ -1,26 +1,50 @@
 const controlller = require('./cotroller');
 
 module.exports = [
-  // update position driver
+
+  // request ride firt stap
+  {
+    method: 'POST',
+    path: '/ride',
+    config: {
+      auth: {
+        strategy: 'jwt',
+        access: [{
+          scope: ['user'],
+        }],
+      },
+    },
+    handler: controlller.createRide,
+  },
+
+  // aproval by driver
+  {
+    method: 'POST',
+    path: '/ride/{id}',
+    config: {
+      auth: {
+        strategy: 'jwt',
+        access: [{
+          scope: ['driver'],
+        }],
+      },
+    },
+    handler: controlller.aproval,
+  },
+
+  // update by user
   {
     method: 'PUT',
-    path: '/driver',
-    handler: controlller.updatePosition,
+    path: '/ride/{id}',
+    config: {
+      auth: {
+        strategy: 'jwt',
+        access: [{
+          scope: ['user'],
+        }],
+      },
+    },
+    handler: controlller.createRide,
   },
 
-  // register driver
-  {
-    method: 'POST',
-    path: '/driver',
-    config: { auth: false },
-    handler: controlller.registerDriver,
-  },
-
-   // login driver
-   {
-    method: 'POST',
-    path: '/driver/login',
-    config: { auth: false },
-    handler: controlller.login,
-  },
 ];

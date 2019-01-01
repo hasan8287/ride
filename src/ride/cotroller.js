@@ -1,17 +1,50 @@
 const Boom = require('boom');
 const Bcrypt = require('bcryptjs');
-const JWT = require('jsonwebtoken');
+
+const { model: modelDriver } = require('././../driver');
 
 const model = require('./model');
 
 const controller = {};
 
-controller.updatePosition = async (request, reply) => {
+/**
+ * user create ride and serach available driver
+ */
+controller.createRide = async (request, reply) => {
   try {
     const { payload, auth } = request;
     const { credentials  } = auth;
-    
-    const action = await model.updateData(payload, credentials.driver_id);
+
+    payload.user_id = credentials.id;
+
+    const [insert, driver] = await Promise.all([
+      model.createData(payload),
+      modelDriver.available(payload.localtion)
+    ]);
+    return reply.response({
+      data: {
+        driver,
+        ...insert.toJSON(),
+      },
+    }).code(200);
+  } catch (error) {
+    return Boom.badRequest(error.message);
+  }
+};
+
+/**
+ * aproved by driver
+ */
+controller.aproval = async (request, reply) => {
+  try {
+    const { params, auth } = request;
+    const { credentials  } = auth;
+
+    const action = await model.aproval({ id: params.id, driver_id: credentials.driver_id });
+
+    if (!action) {
+      return Boom.badData('failed update data');
+    }
 
     return reply.response({
       data: action,
@@ -22,60 +55,26 @@ controller.updatePosition = async (request, reply) => {
 };
 
 /**
- * login user
+ * update data by user
  */
-controller.login = async (request, reply) => {
+controller.updateData = async (request, reply) => {
   try {
-    const { payload } = request;
+    const { params, auth, payload } = request;
+    const { credentials  } = auth;
 
-    const data = await model.getByEmail(payload.username);
-    if (data) {
-      const valid = await Bcrypt.compare(payload.password, data.password);
-      if (valid) {
-        const token = JWT.sign({
-          driver_id: data._id,
-          email: data.email,
-          name: data.name,
-        }, 'xendit'); 
-        return reply.response({
-          data: {
-            token,
-            ...data.toJSON(),
-          },
-        }).code(200);
-      }
-    }
-
-    return Boom.badData('incorect username or password');
-  } catch (error) {
-    return Boom.badRequest(error.message);
-  }
-};
-
-/**
- * create data users
- */
-controller.registerDriver = async (request, reply) => {
-  try {
-    const { payload } = request;
-    const password = await model.generatePasswordHash(payload.password);
-
-    payload.password = password.hash;
-
-    const action = await model.createData(payload);
+    const action = await model.updateData(payload, params.id, credentials.id);
 
     if (!action) {
-      return Boom.badGateway('failed save data');
+      return Boom.badData('failed update data');
     }
 
-    action.password = password.password;
     return reply.response({
-      data: action,
-    }).code(201);
+      data: {},
+    }).code(200);
   } catch (error) {
     return Boom.badRequest(error.message);
   }
 };
 
-module.exports = controller;
 
+module.exports = controller;

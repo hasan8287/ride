@@ -46,6 +46,15 @@ const Products = new Schema({
 Products.statics = {
 
   /**
+   * get available driver
+   * ! TODO: check location nearly
+   * @param{param : {longitude, latitude}, page: int, limit: int}
+   */
+  available(param, page = 1, limit = 50) {
+    return this.paginate({ status: 'on' }, { page, limit });
+  },
+
+  /**
    * generate/hasing password
    * @param {string} password 
    */

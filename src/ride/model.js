@@ -1,40 +1,43 @@
 const mongoose = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate');
-const Bcrypt = require('bcryptjs');
 
 const { Schema } = mongoose;
 
-const Products = new Schema({
-  // email for username
-	email: {
-		type: String,
-		required: true,
-	},
-	name: {
-		type: String,
-		required: true,
-	},
-	password: {
-		type: String,
-		required: true,
-		default: '',
-	},
-	longitude: {
-		type: Number,
-	},
-	latitude: {
-		type: Number,
+const Rides = new Schema({
+	user_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'users',
+  },
+  driver_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'drivers',
+  },
+  location: {
+    longitude: {
+      type: Number,
+    },
+    latitude: {
+      type: Number,
+    },
+  },
+  destination: {
+    longitude: {
+      type: Number,
+    },
+    latitude: {
+      type: Number,
+    },
   },
   status: {
     type: String,
-    enum: ['off', 'on', 'ride'],
-    default: 'off',
+    enum: ['new', 'process' ,'rides', 'finish', 'cancel'],
+    default: 'new',
   }
 }, {
 	timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 	toJSON: {
     transform: function (doc, ret) {
-    	ret.driver_id = ret._id;
+    	ret.ride_id = ret._id;
       delete ret._id;
       delete ret.__v;
       delete ret.password;
@@ -43,20 +46,23 @@ const Products = new Schema({
   },
 });
 
-Products.statics = {
+Rides.statics = {
 
   /**
-   * generate/hasing password
-   * @param {string} password 
+   * driver aproval rides
    */
-  generatePasswordHash (password) {
-    return Bcrypt.genSalt(10)
-      .then(function (salt) {
-        return Bcrypt.hash(password, salt);
-      })
-      .then(function (hash) {
-        return { password, hash };
-      });
+  aproval(param) {
+    return this.findOneAndUpdate({
+      _id: param.id,
+      status: 'new',
+    }, {
+      $set: {
+        status: 'process',
+        driver_id: param.driver_id,
+      }
+    }, {
+      new: true,
+    })
   },
 
   getById (id) {
@@ -73,11 +79,11 @@ Products.statics = {
    * @param {data: object, limit: objectId}
    */
 
-   updateData (data, id) {
-   	return this.findOneAndUpdate({ _id: id }, {
-   		$set: data,
-   	}, { new: true });
-   },
+  updateData (data, id, user_id) {
+    return this.findOneAndUpdate({ _id: id, user_id }, {
+      $set: data,
+    }, { new: true });
+  },
 
 	/**
    * getData
@@ -105,6 +111,6 @@ Products.statics = {
 }
 
 
-Products.plugin(mongoosePaginate);
+Rides.plugin(mongoosePaginate);
 
-module.exports = mongoose.model("drivers", Products);
+module.exports = mongoose.model("rides", Rides);
