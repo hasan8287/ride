@@ -8,13 +8,13 @@ before(() => {
   this.integration = require('./index.spec');
 });
 
-it('should success register user', async () => {
+it('should success register driver', async () => {
   const action = await chai.request(this.integration.baseUrl)
-    .post('user')
+    .post('driver')
     .send({
-      email: 'hasan8287@gmail.com',
-      name: 'fuad',
-      password: 'hasan',
+      email: 'driver@gmail.com',
+      name: 'driver-01',
+      password: 'driver',
     });
   
   chai.expect(action).to.be.an('object').that.haveOwnProperty('status');
@@ -22,11 +22,11 @@ it('should success register user', async () => {
   this.tmp.createData = action.body.data;
 });
 
-it('should failed login user', async () => {
+it('should failed login driver', async () => {
   const action = await chai.request(this.integration.baseUrl)
-    .post('user/login')
+    .post('driver/login')
     .send({
-      username: 'hasan8287@gmail.com',
+      username: 'driver@gmail.com',
       password: 'failed',
     });
   
@@ -34,12 +34,12 @@ it('should failed login user', async () => {
   chai.expect(action.status).to.be.equal(422);
 });
 
-it('should success login user', async () => {
+it('should success login driver', async () => {
   const action = await chai.request(this.integration.baseUrl)
-    .post('user/login')
+    .post('driver/login')
     .send({
-      username: 'hasan8287@gmail.com',
-      password: 'hasan',
+      username: 'driver@gmail.com',
+      password: 'driver',
     });
   
   chai.expect(action).to.be.an('object').that.haveOwnProperty('status');
@@ -49,7 +49,7 @@ it('should success login user', async () => {
 
 it('should success update location', async () => {
   const action = await chai.request(this.integration.baseUrl)
-    .put('user')
+    .put('driver')
     .set({
       Authorization: this.tmp.login.token,
     })
@@ -60,6 +60,22 @@ it('should success update location', async () => {
   
   chai.expect(action).to.be.an('object').that.haveOwnProperty('status');
   chai.expect(action.status).to.be.equal(200);
+  this.tmp.update = action.body.data;
+});
+
+it('should success update status', async () => {
+  const action = await chai.request(this.integration.baseUrl)
+    .put('driver')
+    .set({
+      Authorization: this.tmp.login.token,
+    })
+    .send({
+      status: 'on',
+    });
+
+  chai.expect(action).to.be.an('object').that.haveOwnProperty('status');
+  chai.expect(action.status).to.be.equal(200);
+  chai.expect(action.body.data.status).to.be.equal('on');
   this.tmp.update = action.body.data;
 });
 

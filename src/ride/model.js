@@ -88,10 +88,10 @@ Rides.statics = {
 	/**
    * getData
    * * get data driver
-   * @param {page: int, limit: int}
+   * @param {page: int, limit: int, filter: object}
    */
-  getData (page = 1, limit = 10) {
-    return this.paginate({}, { page, limit });
+  getData (page = 1, limit = 10, filter) {
+    return this.paginate(filter, { page, limit });
   },
 
 

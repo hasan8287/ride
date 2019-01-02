@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 const Hapi = require('hapi');
 const mongoose = require('mongoose');
 
@@ -7,19 +9,24 @@ const config = require('./../config');
 const { routes, lib } = require('./core');
 
 const Server = Hapi.Server({
-  host: config.host,
-  port: config.port,
+  host: process.env.HOST,
+  port: process.env.PORT,
   routes: {cors: {origin: ['*']}},
+});
+
+Server.state('session', {  
+  ttl: 1000 * 60 * 60 * 24,    // 1 day lifetime
+  encoding: 'base64json'       // cookie data is JSON-stringified and Base64 encoded
 });
 
 async function start() {
   try {
-    await mongoose.connect(encodeURI(config.db_url), { useNewUrlParser: true });
+    await mongoose.connect(encodeURI(process.env.DB_URL), { useNewUrlParser: true });
 
 
     await Server.register(require('hapi-auth-jwt2'));
     Server.auth.strategy('jwt', 'jwt',
-      { key: 'xendit', // Never Share your secret key
+      { key: process.env.SCRET_KEY, // Never Share your secret key
         validate: lib.validate, // validate function defined above
         verifyOptions: { algorithms: [ 'HS256' ] } // pick a strong algorithm
       });

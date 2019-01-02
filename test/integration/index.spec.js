@@ -7,7 +7,7 @@ this.integration = {
 };
 
 
-describe('User Tax Module', () => {
+describe('User Module', () => {
   before(() => {
     module.exports = this.integration;
   });
@@ -19,10 +19,27 @@ describe('User Tax Module', () => {
   });
 });
 
-// describe('Tax Module', () => {
-//   before(() => {
-//     module.exports = this.integration;
-//   });
+describe('Driver Module', () => {
+  before(() => {
+    module.exports = this.integration;
+  });
 
-//   require('./tax.spec');
-// });
+  require('./driver.spec');
+
+  after(() => {
+    this.integration.driver = require('./driver.spec');
+  });
+});
+
+
+describe('Rides Module', () => {
+  before(() => {
+    module.exports = this.integration;
+  });
+
+  require('./ride.spec');
+
+  after(() => {
+    this.integration.user = require('./ride.spec');
+  });
+});

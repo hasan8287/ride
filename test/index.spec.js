@@ -2,17 +2,24 @@ require('dotenv').config();
 
 const Hapi = require('hapi');
 const mongoose = require('mongoose');
-const { routes } = require('./../src/core');
+const { routes, lib } = require('./../src/core');
 
 
 describe('start test', () => {
-  before(() => {
+  before(async () => {
     mongoose.connect('mongodb://localhost:27017/ride-test');
     const Server = Hapi.Server({
       host: 'localhost',
       port: 8080,
     });
 
+    await Server.register(require('hapi-auth-jwt2'));
+    Server.auth.strategy('jwt', 'jwt',
+      { key: 'xendit', // Never Share your secret key
+        validate: lib.validate, // validate function defined above
+        verifyOptions: { algorithms: [ 'HS256' ] } // pick a strong algorithm
+      });
+    Server.auth.default('jwt');
 
     Server.route(routes);
 

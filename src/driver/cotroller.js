@@ -37,7 +37,7 @@ controller.login = async (request, reply) => {
           email: data.email,
           name: data.name,
           scope: 'driver',
-        }, 'xendit'); 
+        }, process.env.SCRET_KEY); 
         return reply.response({
           data: {
             token,

@@ -8,6 +8,29 @@ const model = require('./model');
 const controller = {};
 
 /**
+ * get data ride
+ */
+controller.getData = async (request, reply) => {
+  try {
+    const { query, auth } = request;
+    const { page, limit } = query;
+    const { credentials } = auth;
+
+    const filter = {};
+    if (credentials.id) filter.user_id = credentials.id;
+    if (credentials.driver_id) filter.driver_id = credentials.driver_id;
+    
+    const data = await model.getData(parseInt(page, 10), parseInt(limit, 10), filter);
+
+    return reply.response({
+      data,
+    }).code(200);
+  } catch (error) {
+    return Boom.badRequest(error.message);
+  }
+};
+
+/**
  * user create ride and serach available driver
  */
 controller.createRide = async (request, reply) => {
@@ -69,7 +92,7 @@ controller.updateData = async (request, reply) => {
     }
 
     return reply.response({
-      data: {},
+      data: action,
     }).code(200);
   } catch (error) {
     return Boom.badRequest(error.message);

@@ -2,6 +2,21 @@ const controlller = require('./cotroller');
 
 module.exports = [
 
+  // get data ride
+  {
+    method: 'GET',
+    path: '/ride',
+    config: {
+      auth: {
+        strategy: 'jwt',
+        access: [{
+          scope: ['user', 'driver'],
+        }],
+      },
+    },
+    handler: controlller.getData,
+  },
+
   // request ride firt stap
   {
     method: 'POST',
@@ -19,8 +34,8 @@ module.exports = [
 
   // aproval by driver
   {
-    method: 'POST',
-    path: '/ride/{id}',
+    method: 'PUT',
+    path: '/ride/{id}/approval',
     config: {
       auth: {
         strategy: 'jwt',
@@ -44,7 +59,7 @@ module.exports = [
         }],
       },
     },
-    handler: controlller.createRide,
+    handler: controlller.updateData,
   },
 
 ];
