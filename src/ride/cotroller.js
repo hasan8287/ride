@@ -1,7 +1,8 @@
 const Boom = require('boom');
 const Bcrypt = require('bcryptjs');
 
-const { model: modelDriver } = require('././../driver');
+const { model: modelDriver } = require('./../driver');
+const { updateStatus } = require('./../driver/cotroller');
 
 const model = require('./model');
 
@@ -60,11 +61,12 @@ controller.createRide = async (request, reply) => {
  */
 controller.aproval = async (request, reply) => {
   try {
-    const { params, auth } = request;
+    const { auth, payload } = request;
     const { credentials  } = auth;
 
-    const action = await model.aproval({ id: params.id, driver_id: credentials.driver_id });
+    const action = await model.aproval({ id: payload.ride_id, driver_id: credentials.driver_id });
 
+    await updateStatus(credentials.driver_id, 'ride');
     if (!action) {
       return Boom.badData('failed update data');
     }
@@ -87,8 +89,13 @@ controller.updateData = async (request, reply) => {
 
     const action = await model.updateData(payload, params.id, credentials.id);
 
-    if (!action) {
-      return Boom.badData('failed update data');
+    if (!action) return Boom.badData('failed update data');
+
+    // update driver
+    if (action.driver_id) {
+      if (action.status !== 'process') {
+        await updateStatus(action.driver_id);
+      }
     }
 
     return reply.response({
@@ -98,6 +105,5 @@ controller.updateData = async (request, reply) => {
     return Boom.badRequest(error.message);
   }
 };
-
 
 module.exports = controller;

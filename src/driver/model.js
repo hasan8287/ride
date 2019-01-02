@@ -4,7 +4,7 @@ const Bcrypt = require('bcryptjs');
 
 const { Schema } = mongoose;
 
-const Products = new Schema({
+const Drivers = new Schema({
   // email for username
 	email: {
 		type: String,
@@ -43,7 +43,7 @@ const Products = new Schema({
   },
 });
 
-Products.statics = {
+Drivers.statics = {
 
   /**
    * get available driver
@@ -114,6 +114,6 @@ Products.statics = {
 }
 
 
-Products.plugin(mongoosePaginate);
+Drivers.plugin(mongoosePaginate);
 
-module.exports = mongoose.model("drivers", Products);
+module.exports = mongoose.model("drivers", Drivers);

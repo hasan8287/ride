@@ -1,6 +1,14 @@
 const controlller = require('./cotroller');
 
 module.exports = [
+  // get available driver
+  {
+    method: 'GET',
+    path: '/driver',
+    config: { auth: false },
+    handler: controlller.getData,
+  },
+
   // update position driver
   {
     method: 'PUT',

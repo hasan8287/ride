@@ -50,9 +50,12 @@ it('should success update ride', async () => {
 
 it('should success approval ride by driver', async () => {
   const action = await chai.request(this.integration.baseUrl)
-    .put(`ride/${this.tmp.createData.ride_id}/approval`)
+    .put(`ride/approval`)
     .set({
       Authorization: this.integration.driver.login.token,
+    })
+    .send({
+      ride_id: this.tmp.createData.ride_id,
     });
   
   chai.expect(action).to.be.an('object').that.haveOwnProperty('status');

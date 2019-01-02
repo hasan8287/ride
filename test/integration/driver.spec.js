@@ -79,6 +79,18 @@ it('should success update status', async () => {
   this.tmp.update = action.body.data;
 });
 
+it('should success get available driver', async () => {
+  const action = await chai.request(this.integration.baseUrl)
+    .get('driver')
+    .query({
+      page: 1,
+      limit: 20,
+    })
+  chai.expect(action).to.be.an('object').that.haveOwnProperty('status');
+  chai.expect(action.status).to.be.equal(200);
+  this.tmp.data = action.body.data;
+});
+
 
 after(() => {
   module.exports = this.tmp;

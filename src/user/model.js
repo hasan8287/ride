@@ -4,7 +4,7 @@ const Bcrypt = require('bcryptjs');
 
 const { Schema } = mongoose;
 
-const Products = new Schema({
+const Users = new Schema({
   // email for username
 	email: {
 		type: String,
@@ -38,7 +38,7 @@ const Products = new Schema({
   },
 });
 
-Products.statics = {
+Users.statics = {
 
   /**
    * generate/hasing password
@@ -113,6 +113,6 @@ Products.statics = {
 }
 
 
-Products.plugin(mongoosePaginate);
+Users.plugin(mongoosePaginate);
 
-module.exports = mongoose.model("users", Products);
+module.exports = mongoose.model("users", Users);

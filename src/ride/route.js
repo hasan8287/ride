@@ -35,7 +35,7 @@ module.exports = [
   // aproval by driver
   {
     method: 'PUT',
-    path: '/ride/{id}/approval',
+    path: '/ride/approval',
     config: {
       auth: {
         strategy: 'jwt',

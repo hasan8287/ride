@@ -30,7 +30,7 @@ const Rides = new Schema({
   },
   status: {
     type: String,
-    enum: ['new', 'process' ,'rides', 'finish', 'cancel'],
+    enum: ['new', 'process', 'finish', 'cancel'],
     default: 'new',
   }
 }, {
@@ -78,7 +78,6 @@ Rides.statics = {
    * * update data driver
    * @param {data: object, limit: objectId}
    */
-
   updateData (data, id, user_id) {
     return this.findOneAndUpdate({ _id: id, user_id }, {
       $set: data,

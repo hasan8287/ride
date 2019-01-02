@@ -1,6 +1,4 @@
-
-
-const baseUrl = 'localhost:8080/';
+const baseUrl = `${process.env.HOST}:${process.env.PORT}/`;
 
 this.integration = {
   baseUrl,

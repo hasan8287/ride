@@ -3,9 +3,6 @@ require('dotenv').config()
 const Hapi = require('hapi');
 const mongoose = require('mongoose');
 
-const config = require('./../config');
-
-
 const { routes, lib } = require('./core');
 
 const Server = Hapi.Server({
@@ -22,8 +19,6 @@ Server.state('session', {
 async function start() {
   try {
     await mongoose.connect(encodeURI(process.env.DB_URL), { useNewUrlParser: true });
-
-
     await Server.register(require('hapi-auth-jwt2'));
     Server.auth.strategy('jwt', 'jwt',
       { key: process.env.SCRET_KEY, // Never Share your secret key

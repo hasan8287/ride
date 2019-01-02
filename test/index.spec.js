@@ -7,15 +7,15 @@ const { routes, lib } = require('./../src/core');
 
 describe('start test', () => {
   before(async () => {
-    mongoose.connect('mongodb://localhost:27017/ride-test');
+    mongoose.connect(process.env.DB_URL_TEST);
     const Server = Hapi.Server({
-      host: 'localhost',
-      port: 8080,
+      host: process.env.HOST,
+      port: process.env.PORT,
     });
 
     await Server.register(require('hapi-auth-jwt2'));
     Server.auth.strategy('jwt', 'jwt',
-      { key: 'xendit', // Never Share your secret key
+      { key: process.env.SCRET_KEY, // Never Share your secret key
         validate: lib.validate, // validate function defined above
         verifyOptions: { algorithms: [ 'HS256' ] } // pick a strong algorithm
       });

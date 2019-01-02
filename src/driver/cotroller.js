@@ -6,6 +6,27 @@ const model = require('./model');
 
 const controller = {};
 
+/**
+ * getData
+ * * get available data user
+ */
+controller.getData = async (request, reply) => {
+  try {
+    const { query } = request;
+    const { page, limit } = query;
+
+    const data = await model.available({
+      status: 'on'
+    }, parseInt(page, 10), parseInt(limit, 10));
+
+    return reply.response({
+      data,
+    }).code(200);
+  } catch (error) {
+    return Boom.badRequest(error.message);
+  }
+};
+
 controller.updatePosition = async (request, reply) => {
   try {
     const { payload, auth } = request;
@@ -77,6 +98,22 @@ controller.registerDriver = async (request, reply) => {
     return Boom.badRequest(error.message);
   }
 };
+
+/**
+ * updateStatus
+ ** update staus driver on when ride cancel or finish
+ ** update status driver after approval ride to ride(status)
+*/
+controller.updateStatus = async (id, status = 'on') => {
+  try {
+    const action = await model.updateData({
+      status
+    }, id);
+    return action;
+  } catch (error) {
+    return error;
+  }
+}
 
 module.exports = controller;
 

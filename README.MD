@@ -1,0 +1,11 @@
+RUN SERVISE
+- REQUIRED
+	- node 10
+	- mongodb local / using default but slowly
+- setting on .env
+- start
+	- npm install
+	- npm start
+- test intergation
+	- npm install
+	- npm start
