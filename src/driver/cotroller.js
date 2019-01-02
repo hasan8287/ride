@@ -3,6 +3,7 @@ const Bcrypt = require('bcryptjs');
 const JWT = require('jsonwebtoken');
 
 const model = require('./model');
+const tokenModel = require('./../core/token');
 
 const controller = {};
 
@@ -43,7 +44,7 @@ controller.updatePosition = async (request, reply) => {
 };
 
 /**
- * login user
+ * driver user
  */
 controller.login = async (request, reply) => {
   try {
@@ -53,17 +54,26 @@ controller.login = async (request, reply) => {
     if (data) {
       const valid = await Bcrypt.compare(payload.password, data.password);
       if (valid) {
+
         const token = JWT.sign({
           driver_id: data._id,
           email: data.email,
           name: data.name,
           scope: 'driver',
         }, process.env.SCRET_KEY); 
+
+        // create data token
+        await tokenModel.createData({
+          value: token,
+        });
+
         return reply.response({
           data: {
             token,
             ...data.toJSON(),
           },
+        }).state('session', {
+          token_driver: token,
         }).code(200);
       }
     }

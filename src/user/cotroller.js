@@ -3,6 +3,7 @@ const Bcrypt = require('bcryptjs');
 const JWT = require('jsonwebtoken');
 
 const model = require('./model');
+const tokenModel = require('./../core/token');
 
 const controller = {};
 
@@ -38,11 +39,19 @@ controller.login = async (request, reply) => {
           name: data.name,
           scope: 'user',
         }, process.env.SCRET_KEY); 
+
+        // create data token
+        await tokenModel.createData({
+          value: token,
+        });
+
         return reply.response({
           data: {
             token,
             ...data.toJSON(),
           },
+        }).state('session', {
+          token_user: token,
         }).code(200);
       }
     }

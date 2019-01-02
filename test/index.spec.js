@@ -13,6 +13,11 @@ describe('start test', () => {
       port: process.env.PORT,
     });
 
+    Server.state('session', {  
+      ttl: 1000 * 60 * 60 * 24,    // 1 day lifetime
+      encoding: 'base64json'       // cookie data is JSON-stringified and Base64 encoded
+    });
+
     await Server.register(require('hapi-auth-jwt2'));
     Server.auth.strategy('jwt', 'jwt',
       { key: process.env.SCRET_KEY, // Never Share your secret key
@@ -40,9 +45,5 @@ describe('start test', () => {
   // eslint-disable-next-line global-require
   it('integration testing', () => {
     require('./integration/index.spec');
-  })
-
-  after(() => {
-    // console.log('oke bro')
   });
 });
