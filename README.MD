@@ -6,6 +6,9 @@ RUN SERVISE
 - start
 	- npm install
 	- npm start
+- start
+	- npm install
+	- npm test
 - test intergation
 	- npm install
 	- npm start
