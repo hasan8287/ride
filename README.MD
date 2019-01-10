@@ -6,12 +6,9 @@ RUN SERVISE
 - start
 	- npm install
 	- npm start
-- start
-	- npm install
-	- npm test
 - test intergation
 	- npm install
-	- npm start
+	- npm test
 
 - DOCS API POSTMAN
 	- https://documenter.getpostman.com/view/2716037/RznCpdyH
